@@ -1,16 +1,12 @@
 
-
-
 ********************************************************************************
 * PROJECT: LBB Teacher Questionnaire - Quality Control (QC)
 ********************************************************************************
 
-
-
 **Setting the working directory
 cls
 clear all
-cd "C:\Users\user\OneDrive\Desktop\Dalberg QC\2025\LBB\Teachers\Raw data"
+cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Teachers"
 
 ***import dataset
 import spss using "Teacher LBB Baseline Study_WIDE.sav", clear
@@ -22,6 +18,8 @@ replace INT_DATE = dofc(INT_DATE)
 format INT_DATE %td
 
 lab var INT_DATE"Interview Date"
+
+drop if INT_DATE<td(16feb2026)
 
 *Time.
 gen str8 START_TIME_str = string(START_TIME, "%tcHH:MM:SS")
@@ -35,6 +33,7 @@ drop SubmissionDate username starttime endtime deviceid devicephonenum device_in
 *Dropping unconsented interviews.
 drop if Consent == 0
 
+order KEY
 
 checks-Flaggings
 ***************************************************************************************
