@@ -39,14 +39,14 @@ drop reading_comprehension_q1_correct-reading_comprehension_q5_correct
 	
 order reading_comprehension_score,after(reading_comprehension_q5)
 
-ren School_informationCounty_label County
-ren School_informationSub_county_lab Sub_county
-ren School_informationSchool_label School
-ren School_informationSchool_type School_type
+// ren School_informationCounty_label County
+// ren School_informationSub_county_lab Sub_county
+// ren School_informationSchool_label School
+// ren School_informationSchool_type School_type
 
 *Labelling files
 lab var  SUP_NAME"Supervisor name"
-lab var  ENUM_NAME"Enumerator Name"
+
 lab var  County"County"
 lab var  Sub_county"Sub county"
 lab var  School"School"
@@ -465,7 +465,7 @@ capture mkdir "`folder'"
 cd "${dates}"
 
 * var_kept
-global var_kept "interview_ID INT_DATE INT_STARTTIME INT_ENDTIME SUP_NAME ENUM_NAME COUNTY SUBCOUNTY Group SCHOOL_DESCRIPTION GRADE RES_NAME_F RES_NAME_L RES_AGE RES_SEX"
+global var_kept "interview_ID INT_DATE INT_STARTTIME INT_ENDTIME SUP_NAME ENUM_NAME County Group SCHOOL_DESCRIPTION Diability_Cat GRADE RES_NAME_F RES_NAME_L RES_AGE RES_SEX"
 
 ** generate a Comment based on the issue raised
 gen issue_comment = ""
@@ -524,371 +524,127 @@ keep if int_dup>0
 cap export excel $var_kept int_dup issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Interv_dupl_main_issues,replace)firstrow(variables)
 restore
 
-////////
-
-*Official language against Survey_language
-*Grade 1 C1.
-preserve
-replace issue_comment ="The survey language is different from the official language yet it is grade 1 student, Kindly clarify"
-keep if survey_language == 1 & B4 == 1
-cap export excel $var_kept issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Language_mismatch_gr1,replace)firstrow(variables)
-restore 
-
-*Grade 1 C3.
-preserve
-replace issue_comment ="The survey language is not French yet the student is grade 3, Kindly clarify"
-keep if survey_language != 1 & B4 == 3
-cap export excel $var_kept issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Language_mismatch_gr3,replace)firstrow(variables)
-restore 
-
-
-/////////
-
-*Semantic section
-*Semantic 1
-*Listen to the recordings
-preserve
-replace issue_comment ="Timer in the Semantic section 1 was not started or started and stopped immediately, kindly clarify"
-keep if (semantic_language_timer1time_rem != 0 & word_count_language_1 <= 10 & semantic_language_timer1gridAuto == 0)| (semantic_language_timer1time_rem != 0 & semantic_language_timer1gridAuto == 1 & word_count_language_1 <= 10)
-cap export excel $var_kept semantic_language_timer1duration	semantic_language_timer1time_rem semantic_language_timer1gridAuto word_count_language_1	interviewer_semantic_1 issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(semantic_1,replace)firstrow(variables)
-restore 
-
-*Semantic 2
-*Listen to the recordings
-preserve
-replace issue_comment ="Timer in the Semantic section 2 was not started or started and stopped immediately, kindly clarify"
-keep if (semantic_language_timer2time_rem != 0 & word_count_language_2 <= 10 & semantic_language_timer2gridAuto == 0)| (semantic_language_timer2time_rem != 0 & semantic_language_timer2gridAuto == 1 & word_count_language_2 <= 10)
-cap export excel $var_kept semantic_language_timer2duration	semantic_language_timer2time_rem semantic_language_timer2gridAuto word_count_language_2	interviewer_semantic_2 issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(semantic_2,replace)firstrow(variables)
-restore 
-
-*Semantic 3
-*Listen to the recordings
-preserve
-replace issue_comment ="Timer in the Semantic section 3 was not started or started and stopped immediately, kindly clarify"
-keep if (semantic_language_timer3time_rem != 0 & word_count_language_3 <= 10 & semantic_language_timer3gridAuto == 0)| (semantic_language_timer3time_rem != 0 & semantic_language_timer3gridAuto == 1 & word_count_language_3 <= 10)
-cap export excel $var_kept semantic_language_timer3duration	semantic_language_timer3time_rem semantic_language_timer3gridAuto word_count_language_3	interviewer_semantic_3 issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(semantic_3,replace)firstrow(variables)
-restore 
-
 *Letter_knowledge 
-*listen to recordings
-*fr
+*not started
 preserve
-replace issue_comment ="Timer in the letter knowledge was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_frduration - letter_knowledge_frtime_remainin < 60 & letter_knowledge_frgridAutoStopp == 0) | letter_knowledge_frgridAutoStopp == 1 | letter_knowledge_frnum_att < 8
-cap export excel $var_kept letter_knowledge_recording_fr -  letter_knowledge_reason_fr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_fr_time,replace)firstrow(variables)
+replace issue_comment ="Timer in the letter knowledge was not started, kindly clarify"
+keep if letter_sound_knowledgetime_remai == letter_sound_knowledgeduration
+cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_time_1,replace)firstrow(variables)
 restore
 
-*wf
+*time spent is unrealistic yet the trigger did not happen
 preserve
-replace issue_comment ="Timer in the letter knowledge was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_wfduration - letter_knowledge_wftime_remainin < 60 & letter_knowledge_wfgridAutoStopp == 0) | letter_knowledge_wfgridAutoStopp == 1 | letter_knowledge_wfnum_att < 8
-cap export excel $var_kept letter_knowledge_recording_wf -  letter_knowledge_reason_wf issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_wf_time,replace)firstrow(variables)
+replace issue_comment ="Timer in the letter knowledge was very short than expected, kindly clarify"
+keep if (letter_sound_knowledgeduration - letter_sound_knowledgetime_remai) < 30 & letter_sound_knowledgegridAutoSt == 0
+cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_time_2,replace)firstrow(variables)
 restore
 
-*sr
+*time spent is unrealistic yet even with trigger
 preserve
-replace issue_comment ="Timer in the letter knowledge was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_srduration - letter_knowledge_srtime_remainin  < 60 & letter_knowledge_srgridAutoStopp == 0)| letter_knowledge_srgridAutoStopp == 1 | letter_knowledge_srnum_att < 8
-cap export excel $var_kept letter_knowledge_recording_sr -  letter_knowledge_reason_sr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_sr_time,replace)firstrow(variables)
+replace issue_comment ="Timer in the letter knowledge was very short than expected even when the trigger happen, kindly clarify"
+keep if (letter_sound_knowledgeduration - letter_sound_knowledgetime_remai) < 10 & letter_sound_knowledgegridAutoSt == 1
+cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_time_3,replace)firstrow(variables)
 restore
 
-*pr
+*Attempted items were less than expected yet there was no trigger
 preserve
-replace issue_comment ="Timer in the letter knowledge was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_prduration - letter_knowledge_prtime_remainin  < 60 & letter_knowledge_prgridAutoStopp == 0)| letter_knowledge_prgridAutoStopp == 1 | letter_knowledge_prnum_att < 8
-cap export excel $var_kept letter_knowledge_recording_pr -  letter_knowledge_reason_pr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_pr_time,replace)firstrow(variables)
-restore
-
-*stops
-*fr
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (letter_knowledge_stop_fr != letter_knowledge_frgridAutoStopp)
-cap export excel $var_kept letter_knowledge_recording_fr -  letter_knowledge_stop_fr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(letter_knowledge_fr_stop,replace)firstrow(variables)
-restore
-
-*wf
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (letter_knowledge_stop_wf != letter_knowledge_wfgridAutoStopp)
-cap export excel $var_kept letter_knowledge_recording_wf -  letter_knowledge_stop_wf issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(letter_knowledge_wf_stop,replace)firstrow(variables)
-restore
-
-*sr
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (letter_knowledge_stop_sr != letter_knowledge_srgridAutoStopp)
-cap export excel $var_kept letter_knowledge_recording_sr -  letter_knowledge_stop_sr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(letter_knowledge_sr_stop,replace)firstrow(variables)
-restore
-
-*pr
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (letter_knowledge_stop_pr != letter_knowledge_prgridAutoStopp)
-cap export excel $var_kept letter_knowledge_recording_pr -  letter_knowledge_stop_pr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(letter_knowledge_pr_stop,replace)firstrow(variables)
-restore
-
-*letter part B
-*fr
-preserve
-replace issue_comment ="Timer in the letter knowledge in part B was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_fr_Bduration - letter_knowledge_fr_Btime_remain < 60 & letter_knowledge_fr_BgridAutoSto == 0)| letter_knowledge_fr_BgridAutoSto == 1 | letter_knowledge_fr_Bnum_att < 8
-cap export excel $var_kept letter_knowledge_fr_B_1 -  letter_knowledge_fr_Bitems_per_m issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_B_fr_time,replace)firstrow(variables)
-restore
-
-*wf
-preserve
-replace issue_comment ="Timer in the letter knowledge in part B was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_wf_Bduration - letter_knowledge_wf_Btime_remain < 60 & letter_knowledge_wf_BgridAutoSto == 0) | letter_knowledge_wf_BgridAutoSto == 1 | letter_knowledge_wf_Bnum_att < 8
-cap export excel $var_kept letter_knowledge_wf_B_1 -  letter_knowledge_wf_Bitems_per_m issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_B_wf_time,replace)firstrow(variables)
-restore
-
-*sr
-preserve
-replace issue_comment ="Timer in the letter knowledge in part B was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_sr_Bduration - letter_knowledge_sr_Btime_remain < 60 & letter_knowledge_sr_BgridAutoSto == 0)| letter_knowledge_sr_BgridAutoSto == 1 | letter_knowledge_sr_Bnum_att < 8
-cap export excel $var_kept letter_knowledge_sr_B_1 -  letter_knowledge_sr_Bitems_per_m issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_B_sr_time,replace)firstrow(variables)
-restore
-
-*pr
-preserve
-replace issue_comment ="Timer in the letter knowledge in part B was not started or started and stopped immediately, kindly clarify"
-keep if (letter_knowledge_pr_Bduration - letter_knowledge_pr_Btime_remain < 60 & letter_knowledge_pr_BgridAutoSto == 0)| letter_knowledge_pr_BgridAutoSto == 1 | letter_knowledge_pr_Bnum_att < 8
-cap export excel $var_kept letter_knowledge_pr_B_1 -  letter_knowledge_pr_Bitems_per_m issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_B_pr_time,replace)firstrow(variables)
+replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
+keep if letter_sound_knowledgenum_att < 100 & letter_sound_knowledgegridAutoSt == 0 & letter_sound_knowledgetime_remai != 0
+cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Letter_knowledge_time_3,replace)firstrow(variables)
 restore
 
 * reading familiar 
-*Listen to the recordings
-*fr
+*not started
 preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_frduration - read_familiar_words_frtime_remai < 60 & read_familiar_words_frgridAutoSt == 0) | read_familiar_words_frgridAutoSt == 1 | reading_familiar_words_frnum_att < 8
-cap export excel $var_kept read_familiar_words_fr_1 - read_familiar_words_fritems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_fr_time,replace)firstrow(variables)
+replace issue_comment ="Timer in the reading familiar was not started, kindly clarify"
+keep if read_familiar_wordstime_remainin == read_familiar_wordsduration
+cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_familiar_time_1,replace)firstrow(variables)
 restore
 
-*wf
+*time spent is unrealistic yet the trigger did not happen
 preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_wfduration - read_familiar_words_wftime_remai < 60 & read_familiar_words_wfgridAutoSt == 0) | read_familiar_words_wfgridAutoSt == 1 | reading_familiar_words_wfnum_att < 8
-cap export excel $var_kept read_familiar_words_wf_1 - read_familiar_words_wfitems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_wf_time,replace)firstrow(variables)
+replace issue_comment ="Timer in the reading familiar was very short than expected, kindly clarify"
+keep if (read_familiar_wordsduration - read_familiar_wordstime_remainin) < 30 & read_familiar_wordsgridAutoStopp == 0
+cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_familiar_time_2,replace)firstrow(variables)
 restore
 
-*sr
+*time spent is unrealistic yet even with trigger
 preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_srduration - read_familiar_words_srtime_remai < 60 & read_familiar_words_srgridAutoSt == 0)| read_familiar_words_srgridAutoSt == 1 | reading_familiar_words_srnum_att < 8
-cap export excel $var_kept read_familiar_words_sr_1 - read_familiar_words_sritems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_sr_time,replace)firstrow(variables)
+replace issue_comment ="Timer in the reading familiar was very short than expected even when the trigger happen, kindly clarify"
+keep if (read_familiar_wordsduration - read_familiar_wordstime_remainin) < 10 & read_familiar_wordsgridAutoStopp == 1
+cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_familiar_time_3,replace)firstrow(variables)
 restore
 
-*pr
+*Attempted items were less than expected yet there was no trigger
 preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_prduration - read_familiar_words_prtime_remai < 60 & read_familiar_words_prgridAutoSt == 0)| read_familiar_words_prgridAutoSt == 1 | reading_familiar_words_prnum_att < 8
-cap export excel $var_kept read_familiar_words_pr_1 - read_familiar_words_pritems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_pr_time,replace)firstrow(variables)
+replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
+keep if read_familiar_wordsnum_att < 50 & read_familiar_wordsgridAutoStopp == 0 & read_familiar_wordstime_remainin != 0
+cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_familiar_time_3,replace)firstrow(variables)
 restore
 
-*stops
-*fr
+* Oral fluency 
+*not started
 preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_familiar_stop_fr != read_familiar_words_frgridAutoSt)
-cap export excel $var_kept read_familiar_words_fr_1 - read_familiar_stop_fr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_fr_stop,replace)firstrow(variables)
+replace issue_comment ="Timer in the Oral fluency was not started, kindly clarify"
+keep if oral_reading_fluencytime_remaini == oral_reading_fluencyduration
+cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_reading_time_1,replace)firstrow(variables)
 restore
 
-*wf
+*time spent is unrealistic yet the trigger did not happen
 preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_familiar_stop_wf != read_familiar_words_wfgridAutoSt)
-cap export excel $var_kept read_familiar_words_wf_1 - read_familiar_stop_wf issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_fr_stop,replace)firstrow(variables)
+replace issue_comment ="Timer in the Oral fluency was very short than expected, kindly clarify"
+keep if (oral_reading_fluencyduration - oral_reading_fluencytime_remaini) < 30 & oral_reading_fluencygridAutoStop == 0
+cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_reading_time_2,replace)firstrow(variables)
 restore
 
-*sr
+*time spent is unrealistic yet even with trigger
 preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_familiar_stop_sr != read_familiar_words_srgridAutoSt)
-cap export excel $var_kept read_familiar_words_sr_1 - read_familiar_stop_sr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_fr_stop,replace)firstrow(variables)
+replace issue_comment ="Timer in the Oral fluency was very short than expected even when the trigger happen, kindly clarify"
+keep if (oral_reading_fluencyduration - oral_reading_fluencytime_remaini) < 10 & oral_reading_fluencygridAutoStop == 1
+cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_reading_time_3,replace)firstrow(variables)
 restore
 
-*pr
+*Attempted items were less than expected yet there was no trigger
 preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_familiar_stop_pr != read_familiar_words_prgridAutoSt)
-cap export excel $var_kept read_familiar_words_pr_1 - read_familiar_stop_pr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_fr_stop,replace)firstrow(variables)
+replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
+keep if read_familiar_wordsnum_att < 50 & oral_reading_fluencygridAutoStop == 0 & oral_reading_fluencytime_remaini != 0
+cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_reading_time_3,replace)firstrow(variables)
 restore
 
-*Familiar part B
-*fr
+* Addition
+*Attempted items were less than expected yet there was no trigger
 preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_fr_Bduration - read_familiar_words_fr_Btime_rem < 60 & read_familiar_words_fr_BgridAuto == 0)| read_familiar_words_fr_BgridAuto == 1 | reading_famila_word_fr_Bnum_att < 8
-cap export excel $var_kept read_familiar_words_fr_B_1 - read_familiar_words_fr_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_B_fr_time,replace)firstrow(variables)
+replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
+keep if addition_gridnumber_of_items_att < 5 & addition_gridgridAutoStopped == 0
+cap export excel $var_kept addition_grid_1 -  addition_gridautoStop issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(addition_issue,replace)firstrow(variables)
 restore
 
-*wf
+* Subtraction
+*Attempted items were less than expected yet there was no trigger
 preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_wf_Bduration - read_familiar_words_wf_Btime_rem < 60 & read_familiar_words_wf_BgridAuto == 0) | read_familiar_words_fr_BgridAuto == 1 | reading_famila_word_fr_Bnum_att < 8
-cap export excel $var_kept read_familiar_words_wf_B_1 - read_familiar_words_wf_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_B_wf_time,replace)firstrow(variables)
+replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
+keep if subtraction_gridnum_att < 5 & subtraction_gridgridAutoStopped == 0
+cap export excel $var_kept subtraction_grid_1 -  subtraction_gridgridAutoStopped issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(subtraction_issue,replace)firstrow(variables)
 restore
-
-*sr
-preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_sr_Bduration - read_familiar_words_sr_Btime_rem < 60 & read_familiar_words_sr_BgridAuto == 0) | read_familiar_words_sr_BgridAuto == 1 | reading_famila_word_sr_Bnum_att < 8
-cap export excel $var_kept read_familiar_words_sr_B_1 - read_familiar_words_sr_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_B_sr_time,replace)firstrow(variables)
-restore
-
-*pr
-preserve
-replace issue_comment ="Timer in the Reading familiar words was not started or started and stopped immediately, kindly clarify"
-keep if (read_familiar_words_pr_Bduration - read_familiar_words_pr_Btime_rem < 60 & read_familiar_words_pr_Btime_rem == 0)| read_familiar_words_pr_BgridAuto == 1 | reading_famila_word_pr_Bnum_att < 8
-cap export excel $var_kept read_familiar_words_pr_B_1 - read_familiar_words_pr_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(reading_familiar_B_pr_time,replace)firstrow(variables)
-restore
-
-* reading Invented
-*Listen to recordings 
-*fr
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_frduration - read_invented_words_frtime_remai < 60 & read_invented_words_frgridAutoSt == 0)| read_invented_words_frgridAutoSt == 1 | read_invented_words_frnum_att < 8
-cap export excel $var_kept read_invented_words_fr_1 - read_invented_words_fritems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_fr_time,replace)firstrow(variables)
-restore
-
-*wf
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_wfduration - read_invented_words_wftime_remai < 60 & read_invented_words_wfgridAutoSt == 0) | read_invented_words_wfgridAutoSt == 1 | read_invented_words_wfnum_att < 8
-cap export excel $var_kept read_invented_words_wf_1 - read_invented_words_wfitems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_wf_time,replace)firstrow(variables)
-restore
-
-*sr
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_srduration - read_invented_words_srtime_remai < 60 & read_invented_words_srgridAutoSt == 0)| read_invented_words_srgridAutoSt == 1 | read_invented_words_srnum_att < 8
-cap export excel $var_kept read_invented_words_sr_1 - read_invented_words_sritems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_sr_time,replace)firstrow(variables)
-restore
-
-*pr
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_prduration - read_invented_words_prtime_remai < 60 & read_invented_words_prgridAutoSt == 0)| read_invented_words_prgridAutoSt == 1 | read_invented_words_prnum_att < 8
-cap export excel $var_kept read_invented_words_pr_1 - read_invented_words_pritems_per_ issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_pr_time,replace)firstrow(variables)
-restore
-
-*stops
-*fr
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_invented_stop_fr != read_invented_words_frgridAutoSt)
-cap export excel $var_kept read_invented_words_fr_1 - read_invented_stop_fr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_fr_stop,replace)firstrow(variables)
-restore
-
-*wf
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_invented_stop_wf != read_invented_words_wfgridAutoSt)
-cap export excel $var_kept read_invented_words_wf_1 - read_invented_stop_wf issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_wf_stop,replace)firstrow(variables)
-restore
-
-*sr
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_invented_stop_sr != read_invented_words_srgridAutoSt)
-cap export excel $var_kept read_invented_words_sr_1 - read_invented_stop_sr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_sr_stop,replace)firstrow(variables)
-restore
-
-*pr
-preserve
-replace issue_comment ="The stop rule was activated or was not activated by the system however the stop rule question says it was/was not, kindly clarify"
-keep if (read_invented_stop_pr != read_invented_words_prgridAutoSt)
-cap export excel $var_kept read_invented_words_pr_1 - read_invented_stop_pr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_pr_stop,replace)firstrow(variables)
-restore
-
-*Invented part B
-*fr
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_fr_Bduration - read_invented_words_fr_Btime_rem < 60 & read_invented_words_fr_BgridAuto == 0)| read_invented_words_fr_BgridAuto == 1 | read_invented_word_fr_Bnum_att < 8
-cap export excel $var_kept read_invented_words_fr_B_1 - read_invented_words_fr_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_B_fr_time,replace)firstrow(variables)
-restore
-
-*wf
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_wf_Bduration - read_invented_words_wf_Btime_rem < 60 & read_invented_words_wf_BgridAuto == 0) | read_invented_words_wf_BgridAuto == 1 | read_invented_word_wf_Bnum_att < 8
-cap export excel $var_kept read_invented_words_wf_B_1 - read_invented_words_wf_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_B_wf_time,replace)firstrow(variables)
-restore
-
-*sr
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_sr_Bduration - read_invented_words_sr_Btime_rem < 60 & read_invented_words_sr_BgridAuto == 0)| read_invented_words_sr_BgridAuto == 1 | read_invented_word_sr_Bnum_att < 8
-cap export excel $var_kept read_invented_words_sr_B_1 - read_invented_words_sr_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_B_sr_time,replace)firstrow(variables)
-restore
-
-*pr
-preserve
-replace issue_comment ="Timer in the Reading invented words was not started or started and stopped immediately, kindly clarify"
-keep if (read_invented_words_pr_Bduration - read_invented_words_pr_Btime_rem < 60 & read_invented_words_pr_BgridAuto == 0) | read_invented_words_pr_BgridAuto == 1 | read_invented_word_pr_Bnum_att < 8
-cap export excel $var_kept read_invented_words_pr_B_1 - read_invented_words_pr_Bitems_pe issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(read_invented_B_pr_time,replace)firstrow(variables)
-restore
-
-// * Oral fluency 
-*fr
-preserve
-replace issue_comment ="Timer in the oral reading fluency statements was not started or started and stopped immediately, kindly clarify"
-keep if (oral_reading_fluency_frtime_rema >30 & oral_reading_fluency_frnum_att < 20)
-cap export excel $var_kept oral_reading_fluency_fr_1 - oral_reading_fluency_stop_fr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_fluency_fr_time,replace)firstrow(variables)
-restore
-
-*wf
-preserve
-replace issue_comment ="Timer in the oral reading fluency statements was not started or started and stopped immediately, kindly clarify"
-keep if (oral_reading_fluency_wftime_rema >30 & oral_reading_fluency_wfnum_att < 20)
-cap export excel $var_kept oral_reading_fluency_wf_1 - oral_reading_fluency_stop_wf issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_fluency_wf_time,replace)firstrow(variables)
-restore
-
-// *sr
-// preserve
-// replace issue_comment ="Timer in the oral reading fluency statements was not started or started and stopped immediately, kindly clarify"
-// keep if (oral_reading_fluency_srtime_rema >30 & oral_reading_fluency_srnum_att < 20)
-// cap export excel $var_kept oral_reading_fluency_sr_1 - oral_reading_fluency_stop_sr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_fluency_sr_time,replace)firstrow(variables)
-// restore
-
-*pr
-preserve
-replace issue_comment ="Timer in the oral reading fluency statements was not started or started and stopped immediately, kindly clarify"
-keep if (oral_reading_fluency_prtime_rema >30 & oral_reading_fluency_prnum_att < 20)
-cap export excel $var_kept oral_reading_fluency_pr_1 - oral_reading_fluency_stop_pr issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(oral_fluency_pr_time,replace)firstrow(variables)
-restore
-
-**Languages spoken and used home by kid is different from the interview survey language
 
 ****Baseline data Quick descriptive analysis of the scores fareness.
-*Letter_knowledge part a
-summ letter_knowledge_frnum_att letter_knowledge_frnumber_of_ite 
+*Letter_knowledge
+summ letter_sound_knowledgenum_corr letter_sound_knowledgenum_att
 
-*Letter_knowledge part b
-summ letter_knowledge_fr_Bnum_att letter_knowledge_fr_Bnumber_of_i 
-
-*reading familiar part a
-summ reading_familiar_words_frnum_att read_familiar_words_frnumber_of_ reading_familiar_words_srnum_att read_familiar_words_srnumber_of_ reading_familiar_words_prnum_att read_familiar_words_prnumber_of_ reading_familiar_words_wfnum_att read_familiar_words_wfnumber_of_ 
-
-*reading familiar part b
-summ reading_famila_word_fr_Bnum_att read_familiar_words_fr_Bnumber_o 
-
-*reading invented part a
-summ read_invented_words_frnum_att read_invented_words_frnumber_of_ 
-
-*reading invented part b
-summ read_invented_word_fr_Bnum_att read_invented_words_fr_Bnumber_o 
+*reading familiar
+summ read_familiar_wordsnum_corr read_familiar_wordsnum_att
 
 *phonological_awareness
-*view manually
 *compute average scores/descriptive
-summ phonological_awareness_prnumber_ phonological_awareness_srnumber_ phonological_awareness_wfnumber_ phonological_awareness_frnumber_
+summ phonemic_awareness_score
 
 *oral reading
-summ oral_reading_fluency_frnum_att oral_reading_fluency_frnumber_of oral_reading_fluency_prnum_att oral_reading_fluency_prnumber_of oral_reading_fluency_wfnum_att oral_reading_fluency_wfnumber_of
+summ oral_reading_fluencynum_corr oral_reading_fluencynum_att
+
+summ identifying_numbers_gridnum_corr number_discrimine_gridnum_corr number_sequence_gridnum_corr addition_gridnum_corr
+
+
+
+
 
 
