@@ -48,9 +48,9 @@ order reading_comprehension_score,after(reading_comprehension_q5)
 lab var  SUP_NAME"Supervisor name"
 
 lab var  County"County"
-lab var  Sub_county"Sub county"
+// lab var  Sub_county"Sub county"
 lab var  School"School"
-lab var  School_type"School_type"
+// lab var  School_type"School_type"
 lab var  SCHOOL_DESCRIPTION"SCHOOL_DESCRIPTION"
 lab var  Group"Type of School"
 lab var  GRADE"GRADE"
@@ -486,7 +486,7 @@ bysort INT_DATE ENUM_NAME (INT_STARTTIME): gen gap_mins = (INT_STARTTIME - INT_E
 preserve
 // replace issue_comment ="Time taken to the next interview is way wierd, seems the interview started earlier or overlapped the other interview, kindly clarify"
 keep if !inrange(gap_mins,0,10)
-cap export excel $var_kept INT_STARTTIME INT_ENDTIME gap_mins issue_comment using "LBB DQA issues v01.xlsx", sheet(lag_time_issues,replace)firstrow(variables)
+cap export excel $var_kept INT_STARTTIME INT_ENDTIME gap_mins issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(lag_time_issues,replace)firstrow(variables)
 restore
 
 **GPS Accuracy
@@ -494,7 +494,7 @@ preserve
 destring GPSaccuracy,replace
 // replace issue_comment ="The GPS Accuracy captured is low"
 keep if GPSaccuracy> 20
-cap export excel $var_kept GPS* issue_comment using "LBB DQA issues v01.xlsx", sheet(GPSaccuracy_issues,replace)firstrow(variables)
+cap export excel $var_kept GPS* issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(GPSaccuracy_issues,replace)firstrow(variables)
 restore
 
 **Duplicates GPS
@@ -503,7 +503,7 @@ duplicates tag GPSlatitude GPSlongitude, gen (gps_dup)
 preserve
 // replace issue_comment ="The GPS captured are duplicated, kindly clarify"
 keep if gps_dup> 0
-cap export excel $var_kept GPS* issue_comment using "LBB DQA issues v01.xlsx", sheet(gps_duplicates_issues,replace)firstrow(variables)
+cap export excel $var_kept GPS* issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(gps_duplicates_issues,replace)firstrow(variables)
 restore
 
 **Duplicates Interviews_General
@@ -512,11 +512,11 @@ duplicates tag, gen (Interview_gen_dup)
 preserve
 // replace issue_comment ="The interviews have duplicates, kindly clarify"
 keep if Interview_gen_dup> 0
-cap export excel $var_kept issue_comment using "LBB DQA issues v01.xlsx", sheet(Interv_dupl_gen_issues,replace)firstrow(variables)
+cap export excel $var_kept issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(Interv_dupl_gen_issues,replace)firstrow(variables)
 restore
 
 **Duplicates Interviews_Main
-duplicates tag SCHOOL Student_Name B2 B3 B4,gen(int_dup)
+duplicates tag SCHOOL RES_NAME_F RES_NAME_L RES_SEX RES_AGE,gen(int_dup)
 
 preserve
 replace issue_comment ="The interviews have duplicates, kindly clarify"

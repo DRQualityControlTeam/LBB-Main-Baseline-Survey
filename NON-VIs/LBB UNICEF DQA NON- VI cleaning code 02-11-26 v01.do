@@ -10,7 +10,7 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 ***import dataset
 
-import delimited "Non VI\UNICEF_LBB-Non-Visually_Impaired_Learners_Only_Field-1772457054784.csv", case(preserve)
+import delimited "Non VI\UNICEF_LBB-Non-Visually_Impaired_Learners_Only_Field-1772653996040.csv", case(preserve)
 
 *****************************************************************************************************************
 ****Formating date
@@ -28,7 +28,7 @@ order INT_DATE, after(_id)
 lab var INT_DATE"Interview date"
 
 *filter out older dates
-// drop if INT_DATE < td(02Mar2026)
+drop if INT_DATE < td(02Mar2026)
 
 ******************************************************************
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Codes\LBB-Main-Baseline-Survey\NON-VIs"
@@ -56,6 +56,15 @@ lab define int_lang 1"English" 2 "Swahili"
 
 lab values INT_LANGUAGE int_lang
 
+*supervisor
+label define sup ///
+1  "Boru Mohammed" ///
+2  "Sheryle Amondi" ///
+3  "Mary Nduku"
+
+destring SUP_NAME,replace
+lab values SUP_NAME sup
+
 *Enumerator
 label define enum ///
 1  "Linet Wanja Nkatha" ///
@@ -76,9 +85,17 @@ label define enum ///
 16 "Sheryle Amondi" ///
 17 "Caroline Juma" ///
 18 "Sharon Amonde"
-
+ 
 lab var ENUM_NAME"Enumerator Name"
+
+foreach x in ENUM_NAME ENUM_NAME_1 ENUM_NAME_2 ENUM_NAME_3{
+	replace `x' = "" if `x' == "."
+}
+
+replace ENUM_NAME = ENUM_NAME_1 + ENUM_NAME_2 + ENUM_NAME_3
+destring  ENUM_NAME,replace
 lab values ENUM_NAME enum
+drop ENUM_NAME_1 ENUM_NAME_2 ENUM_NAME_3
 
 *Time.
 gen double INT_STARTTIME1 = clock(INT_STARTTIME, "hm")
@@ -116,6 +133,8 @@ replace Group = "2" if Group == "Control"
 destring Group,replace
 lab values Group grp
 
+drop School_informationGroup School_informationGroup_level
+
 *Grade
 lab var GRADE "GRADE"
 lab define grd 1 "Grade 1" 2 "Grade 2"
@@ -132,7 +151,6 @@ lab var RES_SEX "Respondent sex"
 lab define sx 1"Male" 2"Male" 3"Other"
 lab values RES_SEX sx
 
-
 *universal lab define
 lab define cor_inc 1"Correct" 0"Incorrect"
 lab define true_false 1"TRUE" 0"FALSE"
@@ -147,7 +165,7 @@ replace letter_sound_knowledgegridAutoSt = "0" if letter_sound_knowledgegridAuto
 destring letter_sound_knowledgegridAutoSt,replace
 lab values letter_sound_knowledgegridAutoSt true_false
 
-ren v234 letter_sound_knowledgenum_att
+ren v233 letter_sound_knowledgenum_att
 ren letter_sound_knowledgenumber_of_ letter_sound_knowledgenum_corr
 
 bysort GRADE: summ letter_sound_knowledgenum_corr
@@ -168,7 +186,7 @@ replace read_familiar_wordsgridAutoStopp = "0" if read_familiar_wordsgridAutoSto
 destring read_familiar_wordsgridAutoStopp,replace
 lab values read_familiar_wordsgridAutoStopp true_false
 
-ren v303 read_familiar_wordsnum_att
+ren v302 read_familiar_wordsnum_att
 ren read_familiar_wordsnumber_of_ite read_familiar_wordsnum_corr
 
 bysort GRADE:summ read_familiar_wordsnum_corr
@@ -183,7 +201,7 @@ replace oral_reading_fluencygridAutoStop = "0" if oral_reading_fluencygridAutoSt
 destring oral_reading_fluencygridAutoStop,replace
 lab values oral_reading_fluencygridAutoStop true_false
 
-ren v356 oral_reading_fluencynum_att
+ren v355 oral_reading_fluencynum_att
 ren oral_reading_fluencynumber_of_it oral_reading_fluencynum_corr
 
 ***Reading comprehension
@@ -193,7 +211,7 @@ lab values reading_comprehension_q1 - reading_comprehension_q5 phn
 bysort GRADE: summ oral_reading_fluencynum_corr
 
 *Identifying numbers
-destring identifying_numbers_grid_1 - v384 identifying_numbers_gridautoStop,replace
+destring identifying_numbers_grid_1 - v383 identifying_numbers_gridautoStop,replace
 lab values identifying_numbers_grid_1 - identifying_numbers_grid_20 cor_inc
 
 replace identifying_numbers_gridgridAuto = "1" if identifying_numbers_gridgridAuto == "TRUE"
@@ -201,13 +219,13 @@ replace identifying_numbers_gridgridAuto = "0" if identifying_numbers_gridgridAu
 destring identifying_numbers_gridgridAuto,replace
 lab values identifying_numbers_gridgridAuto true_false
 
-ren v384 identifying_numbers_gridnum_att
+ren v383 identifying_numbers_gridnum_att
 ren identifying_numbers_gridnumber_o identifying_numbers_gridnum_corr
 replace identifying_numbers_gridnum_att = 20 if identifying_numbers_gridnum_att == 0
 
 *Discrimination
-destring number_discrimination_gridautoSt number_discrimination_grid_1 - v393,replace
-ren v393 number_discrimin_gridnum_att
+destring number_discrimination_gridautoSt number_discrimination_grid_1 - v392,replace
+ren v392 number_discrimin_gridnum_att
 ren number_discrimination_gridnumber number_discrimine_gridnum_corr
 replace number_discrimin_gridnum_att = 5 if number_discrimin_gridnum_att == 0
 lab values number_discrimination_grid_1 - number_discrimination_grid_5 cor_inc
@@ -218,10 +236,10 @@ destring number_discrimination_gridgridAu,replace
 lab values number_discrimination_gridgridAu true_false
 
 *Number sequency
-destring number_sequence_grid_1	- v401 number_sequence_gridautoStop,replace
+destring number_sequence_grid_1	- v400 number_sequence_gridautoStop,replace
 lab values number_sequence_grid_1 - number_sequence_grid_4 cor_inc
 
-ren v401 number_sequence_gridnum_att
+ren v400 number_sequence_gridnum_att
 ren number_sequence_gridnumber_of_it number_sequence_gridnum_corr
 replace number_sequence_gridnum_att = 4 if number_sequence_gridnum_att == 0
 
@@ -241,8 +259,8 @@ lab values addition_gridgridAutoStopped true_false
 ren addition_gridnumber_of_items_cor addition_gridnum_corr
 
 *Subtraction
-destring subtraction_grid_1 - v429 subtraction_gridautoStop,replace
-ren v429 subtraction_gridnum_att
+destring subtraction_grid_1 - v428 subtraction_gridautoStop,replace
+ren v428 subtraction_gridnum_att
 ren subtraction_gridnumber_of_items_ subtraction_gridnum_corr
 lab values subtraction_grid_1 - subtraction_grid_10 cor_inc
 
@@ -425,7 +443,7 @@ replace School = "42" if School_informationSchool == "73KMGNBJ"
 destring School,replace
 lab values School school_lbl
 
-drop School_informationSchool_type School_informationSchool_level
+drop School_informationSchool_type School_informationSchool_level School_informationSub_county_lab School_informationSub_county_lev School_informationSchool School_informationSchool_type_le
 
 gen Diability_Cat = "Non VI Learners"
 

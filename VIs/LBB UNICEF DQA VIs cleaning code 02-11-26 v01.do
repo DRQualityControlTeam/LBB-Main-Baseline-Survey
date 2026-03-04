@@ -11,7 +11,7 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 ***import dataset
 
-import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1772468862214.csv", case(preserve)
+import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1772653997116.csv", case(preserve)
 
 *****************************************************************************************************************
 ****Formating date
@@ -19,7 +19,7 @@ import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1772468862
 
 **date
 tostring INT_DATE, replace
-gen INT_DATE1 = date(INT_DATE, "YMD")
+gen INT_DATE1 = date(INT_DATE, "MDY")
 format INT_DATE1 %td
 
 drop INT_DATE
@@ -29,7 +29,7 @@ order INT_DATE, after(_id)
 lab var INT_DATE"Interview date"
 
 *filter out older dates
-// drop if INT_DATE < td(02Mar2026)
+drop if INT_DATE < td(02Mar2026)
 
 *****************************************************************************************************************
 **dropping irrelevant variables
@@ -57,6 +57,15 @@ lab define int_lang 1"English" 2 "Swahili"
 
 lab values INT_LANGUAGE int_lang
 
+*supervisor
+label define sup ///
+1  "Boru Mohammed" ///
+2  "Sheryle Amondi" ///
+3  "Mary Nduku"
+
+destring SUP_NAME,replace
+lab values SUP_NAME sup
+
 *Enumerator
 label define enum ///
 1  "Linet Wanja Nkatha" ///
@@ -77,9 +86,17 @@ label define enum ///
 16 "Sheryle Amondi" ///
 17 "Caroline Juma" ///
 18 "Sharon Amonde"
-
+ 
 lab var ENUM_NAME"Enumerator Name"
+
+foreach x in ENUM_NAME ENUM_NAME_1 ENUM_NAME_2 ENUM_NAME_3{
+	replace `x' = "" if `x' == "."
+}
+
+replace ENUM_NAME = ENUM_NAME_1 + ENUM_NAME_2 + ENUM_NAME_3
+destring  ENUM_NAME,replace
 lab values ENUM_NAME enum
+drop ENUM_NAME_1 ENUM_NAME_2 ENUM_NAME_3
 
 *Time.
 gen double INT_STARTTIME1 = clock(INT_STARTTIME, "hm")
@@ -117,6 +134,8 @@ replace Group = "1" if Group == "Control"
 destring Group,replace
 lab values Group grp
 
+drop School_informationGroup School_informationGroup_level
+
 *Grade
 lab var GRADE "GRADE"
 lab define grd 1 "Grade 1" 2 "Grade 2"
@@ -142,8 +161,8 @@ destring letter_sound_knowledge_1 - letter_sound_knowledgetime_remai letter_soun
 
 lab values letter_sound_knowledge_1 - letter_sound_knowledge_100 cor_inc
 
-replace letter_sound_knowledgegridAutoSt = "1" if letter_sound_knowledgegridAutoSt == "true"
-replace letter_sound_knowledgegridAutoSt = "0" if letter_sound_knowledgegridAutoSt == "false"
+replace letter_sound_knowledgegridAutoSt = "1" if letter_sound_knowledgegridAutoSt == "TRUE"
+replace letter_sound_knowledgegridAutoSt = "0" if letter_sound_knowledgegridAutoSt == "FALSE"
 destring letter_sound_knowledgegridAutoSt,replace
 lab values letter_sound_knowledgegridAutoSt true_false
 
@@ -162,8 +181,8 @@ lab values phonemic_awareness_q1 - phonemic_awareness_q10 phn
 destring read_familiar_words_1 - read_familiar_wordstime_remainin read_familiar_wordsautoStop - read_familiar_wordsitems_per_min,replace
 lab values read_familiar_words_1 - read_familiar_words_50 cor_inc
 
-replace read_familiar_wordsgridAutoStopp = "1" if read_familiar_wordsgridAutoStopp == "true"
-replace read_familiar_wordsgridAutoStopp = "0" if read_familiar_wordsgridAutoStopp == "false"
+replace read_familiar_wordsgridAutoStopp = "1" if read_familiar_wordsgridAutoStopp == "TRUE"
+replace read_familiar_wordsgridAutoStopp = "0" if read_familiar_wordsgridAutoStopp == "FALSE"
 
 destring read_familiar_wordsgridAutoStopp,replace
 lab values read_familiar_wordsgridAutoStopp true_false
@@ -177,8 +196,8 @@ ren read_familiar_wordsnumber_of_ite read_familiar_wordsnum_corr
 destring oral_reading_fluency_1	- oral_reading_fluencytime_remaini oral_reading_fluencyautoStop	- oral_reading_fluencyitems_per_mi,replace
 lab values oral_reading_fluency_1 - oral_reading_fluency_44 cor_inc
 
-replace oral_reading_fluencygridAutoStop = "1" if oral_reading_fluencygridAutoStop == "true"
-replace oral_reading_fluencygridAutoStop = "0" if oral_reading_fluencygridAutoStop == "false"
+replace oral_reading_fluencygridAutoStop = "1" if oral_reading_fluencygridAutoStop == "TRUE"
+replace oral_reading_fluencygridAutoStop = "0" if oral_reading_fluencygridAutoStop == "FALSE"
 
 destring oral_reading_fluencygridAutoStop,replace
 lab values oral_reading_fluencygridAutoStop true_false
@@ -196,8 +215,8 @@ bysort GRADE: summ oral_reading_fluencynum_corr
 destring identifying_numbers_grid_1 - v440 identifying_numbers_gridautoStop,replace
 lab values identifying_numbers_grid_1 - identifying_numbers_grid_20 cor_inc
 
-replace identifying_numbers_gridgridAuto = "1" if identifying_numbers_gridgridAuto == "true"
-replace identifying_numbers_gridgridAuto = "0" if identifying_numbers_gridgridAuto == "false"
+replace identifying_numbers_gridgridAuto = "1" if identifying_numbers_gridgridAuto == "TRUE"
+replace identifying_numbers_gridgridAuto = "0" if identifying_numbers_gridgridAuto == "FALSE"
 destring identifying_numbers_gridgridAuto,replace
 lab values identifying_numbers_gridgridAuto true_false
 
@@ -212,8 +231,8 @@ ren number_discrimination_gridnumber number_discrimine_gridnum_corr
 replace number_discrimin_gridnum_att = 5 if number_discrimin_gridnum_att == 0
 lab values number_discrimination_grid_1 - number_discrimination_grid_5 cor_inc
 
-replace number_discrimination_gridgridAu = "1" if number_discrimination_gridgridAu == "true"
-replace number_discrimination_gridgridAu = "0" if number_discrimination_gridgridAu == "false"
+replace number_discrimination_gridgridAu = "1" if number_discrimination_gridgridAu == "TRUE"
+replace number_discrimination_gridgridAu = "0" if number_discrimination_gridgridAu == "FALSE"
 destring number_discrimination_gridgridAu,replace
 lab values number_discrimination_gridgridAu true_false
 
@@ -225,8 +244,8 @@ ren v457 number_sequence_gridnum_att
 ren number_sequence_gridnumber_of_it number_sequence_gridnum_corr
 replace number_sequence_gridnum_att = 4 if number_sequence_gridnum_att == 0
 
-replace number_sequence_gridgridAutoStop = "1" if number_sequence_gridgridAutoStop == "true"
-replace number_sequence_gridgridAutoStop = "0" if number_sequence_gridgridAutoStop == "false"
+replace number_sequence_gridgridAutoStop = "1" if number_sequence_gridgridAutoStop == "TRUE"
+replace number_sequence_gridgridAutoStop = "0" if number_sequence_gridgridAutoStop == "FALSE"
 destring number_sequence_gridgridAutoStop,replace
 lab values number_sequence_gridgridAutoStop true_false
 
@@ -234,8 +253,8 @@ lab values number_sequence_gridgridAutoStop true_false
 destring addition_grid_1 - addition_gridnumber_of_items_att addition_gridautoStop,replace
 lab values addition_grid_1 - addition_grid_10 cor_inc
 
-replace addition_gridgridAutoStopped = "1" if addition_gridgridAutoStopped == "true"
-replace addition_gridgridAutoStopped = "0" if addition_gridgridAutoStopped == "false"
+replace addition_gridgridAutoStopped = "1" if addition_gridgridAutoStopped == "TRUE"
+replace addition_gridgridAutoStopped = "0" if addition_gridgridAutoStopped == "FALSE"
 destring addition_gridgridAutoStopped,replace
 lab values addition_gridgridAutoStopped true_false
 ren addition_gridnumber_of_items_cor addition_gridnum_corr
@@ -246,8 +265,8 @@ ren v485 subtraction_gridnum_att
 ren subtraction_gridnumber_of_items_ subtraction_gridnum_corr
 lab values subtraction_grid_1 - subtraction_grid_10 cor_inc
 
-replace subtraction_gridgridAutoStopped = "1" if subtraction_gridgridAutoStopped == "true"
-replace subtraction_gridgridAutoStopped = "0" if subtraction_gridgridAutoStopped == "false"
+replace subtraction_gridgridAutoStopped = "1" if subtraction_gridgridAutoStopped == "TRUE"
+replace subtraction_gridgridAutoStopped = "0" if subtraction_gridgridAutoStopped == "FALSE"
 destring subtraction_gridgridAutoStopped,replace
 lab values subtraction_gridgridAutoStopped true_false
 
@@ -423,7 +442,7 @@ replace School = "42" if School_informationSchool == "73KMGNBJ"
 destring School,replace
 lab values School school_lbl
 
-drop School_informationSchool_type School_informationSchool_level
+drop School_informationSchool_type School_informationSchool_level School_informationSub_county_lab School_informationSub_county_lev School_informationSchool School_informationSchool_type_le
 
 gen Diability_Cat = "VI Learners"
 
