@@ -445,6 +445,10 @@ lab values School school_lbl
 
 drop School_informationSchool_type School_informationSchool_level School_informationSub_county_lab School_informationSub_county_lev School_informationSchool School_informationSchool_type_le
 
+destring GPSlatitude	GPSlongitude	GPSaccuracy,replace
+
+drop UNIQUE_IDENTIFIER
+
 gen Diability_Cat = "Non VI Learners"
 
 *save dataset

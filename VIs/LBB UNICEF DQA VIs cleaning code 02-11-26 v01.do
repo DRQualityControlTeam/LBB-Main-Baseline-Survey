@@ -259,6 +259,8 @@ destring addition_gridgridAutoStopped,replace
 lab values addition_gridgridAutoStopped true_false
 ren addition_gridnumber_of_items_cor addition_gridnum_corr
 
+replace addition_gridnumber_of_items_att = 10 if addition_gridnumber_of_items_att == 0
+
 *Subtraction
 destring subtraction_grid_1 - v485 subtraction_gridautoStop,replace
 ren v485 subtraction_gridnum_att
@@ -444,7 +446,12 @@ lab values School school_lbl
 
 drop School_informationSchool_type School_informationSchool_level School_informationSub_county_lab School_informationSub_county_lev School_informationSchool School_informationSchool_type_le
 
+drop UNIQUE_IDENTIFIER
+
 gen Diability_Cat = "VI Learners"
+
+*drop data with missing information
+drop if interview_ID == "bd8d9c8e-733a-419d-97c3-9c22bb882cbc"
 
 *save dataset
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\VI"

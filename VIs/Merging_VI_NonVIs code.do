@@ -4,7 +4,7 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 use "VI\LBB Baseline Survey Processed data VIs.dta",clear
 
-append using "Non VI\LBB Baseline Survey Processed data NON-VIs.dta",force
+append using "Non VI\LBB Baseline Survey Processed data NON-VIs.dta"
 
 *define disability category
 lab define discat 1"VI Learners" 2"Non VI Learners"
@@ -437,7 +437,7 @@ lab var  S28b"Do the difficulties interfere with your everyday life in the follo
 lab var  S28c"Do the difficulties interfere with your everyday life in the following areas? [Classroom learning]"
 lab var  S28d"Do the difficulties interfere with your everyday life in the following areas? [Leisure Activities]"
 lab var  S29"Do the difficulties make it harder for those around you (family, friends, teachers, etc.)?"
-
+asd
 
 *QC checks
 ********************************QC checks-Flaggings
@@ -492,7 +492,7 @@ restore
 **GPS Accuracy
 preserve
 destring GPSaccuracy,replace
-// replace issue_comment ="The GPS Accuracy captured is low"
+replace issue_comment ="The GPS Accuracy captured is low"
 keep if GPSaccuracy> 20
 cap export excel $var_kept GPS* issue_comment using "LBB UNICEF issues ${dates} v01.xlsx", sheet(GPSaccuracy_issues,replace)firstrow(variables)
 restore

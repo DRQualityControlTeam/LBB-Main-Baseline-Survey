@@ -19,7 +19,7 @@ format INT_DATE %td
 
 lab var INT_DATE"Interview Date"
 
-drop if INT_DATE<td(16feb2026)
+drop if INT_DATE<td(02Mar2026)
 
 *Time.
 gen str8 START_TIME_str = string(START_TIME, "%tcHH:MM:SS")
@@ -35,8 +35,31 @@ drop if Consent == 0
 
 order KEY
 
-checks-Flaggings
+*COUNTY
+label define cnty_lbl ///
+1 "Garissa" ///
+2 "Kajiado" ///
+3 "Kakuma" ///
+4 "Kilifi" ///
+5 "Mandera" ///
+6 "Marsabit" ///
+7 "Samburu" ///
+8 "Turkana" ///
+9 "Wajir" ///
+10 "Bungoma"
+
+lab values County cnty_lbl
+
+*School
+label define school_lbl 1 "Iftin Integrated Primary" 2 "Jaribu Primary" 3 "Chief Muturi Integrated Primary" 4 "Enchurrai" 5 "Kikelelwa Integrated Primary" 6 "Lokitang Primary" 7 "Kakuma Placeholder School" 8 "Kibarani Integrated" 9 "Mtsara wa Tsatsu Pri School" 10 "Sahajanad Special School" 11 "Timboni Special School" 12 "Vilakwe Pri School" 13 "Daua Integrated Primary" 14 "Kamor Integrated Primary" 15 "Mandera DEB Primary" 16 "Mandera Special School for the Blind" 17 "Shashafey Integrated Primary" 18 "Al-Hidaya Muslim Primary" 19 "Kiwanja Ndege Primary School" 20 "Logologo Integrated Primary School" 21 "St. Johns Primary" 22 "St. Theresa Girls Primary" 23 "Lkurroto Primary School" 24 "Maralal DEB Primary" 25 "Ntepes Primary School" 26 "Seneya Special Primary School" 27 "St. Pauls Integrated Primary School" 28 "Kakuma Arid Zone" 29 "Kakuma Mixed Primary" 30 "Nationokar Primary" 31 "Barwaqo Girls Integrated Primary" 32 "Catholic Integrated Primary and Junior School" 33 "Got-Ade Primary School" 34 "ICF Integrated Primary School" 35 "Kalkacha Primary School" 36 "Volunteer Primary and Junior School" 37 "Wajir Township Primary" 38 "Misanga FYM Primary" 39 "Mukhuyu FYM Primary" 40 "Mupeli DEB Primary" 41 "Musikoma RC Primary" 42 "Sacred Heart Misikhu RC Boys Primary"
+
+lab values  School_name school_lbl
+
+save "Teacher LBB Baseline Processed data.dta",replace
+
+*checks-Flaggings
 ***************************************************************************************
+cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Quality Control Sheets"
 
 // --- Step 1: Get today's date ---
 local td = date(c(current_date), "DMY")
@@ -56,7 +79,7 @@ cd "${dates}"
 
 * var_kept
 
-global var_kept "KEY INT_DATE START_TIME END_TIME ENUM_NAME County Sub_County Ward School Sch_Type Sch_Description RES_NAME RES_PHONE
+global var_kept "KEY INT_DATE START_TIME END_TIME ENUM_NAME County School_description RES_NAME RES_PHONE B4"
 
 ** generate a Comment based on the issue raised
 gen issue_comment = ""
@@ -67,7 +90,7 @@ preserve
 gen duration_mins = duration / 60
 replace issue_comment ="interview duration is *Longer* or *Shorter*, kindly clarify"
 keep if !inrange(duration_mins,25,45)
-cap export excel $var_kept duration_mins issue_comment using "LBB DQA Teachers ${dates} .xlsx", sheet(duration_issues,replace)firstrow(variables)
+cap export excel $var_kept duration_mins issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet(duration_issues,replace)firstrow(variables)
 restore
 
 
@@ -80,7 +103,7 @@ bysort INT_DATE ENUM_NAME (START_TIME): gen gap_mins = (START_TIME - END_TIME[_n
 preserve
 replace issue_comment ="Time taken to the next interview is way wierd, seems the interview started earlier or overlapped the other interview, kindly clarify"
 keep if !inrange(gap_mins,0,20)
-cap export excel $var_kept gap_mins issue_comment using "LBB DQA Teachers ${dates} .xlsx", sheet(lag_time_issues,replace)firstrow(variables)
+cap export excel $var_kept gap_mins issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet(lag_time_issues,replace)firstrow(variables)
 restore
 
 
@@ -141,9 +164,9 @@ restore
 // Check duplicates by teacher name and school for duplicate interviews
 preserve
 replace issue_comment = "Possible duplicate submission"
-duplicates tag School RES_NAME, gen(dup_count)
+duplicates tag School_name RES_NAME, gen(dup_count)
 keep if dup_count > 0
-cap export excel $var_kept School RES_NAME  dup_count issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("Interview_Duplicates", replace) firstrow(variables)
+cap export excel $var_kept School_name RES_NAME  dup_count issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("Interview_Duplicates", replace) firstrow(variables)
 restore
 
 
@@ -282,7 +305,7 @@ preserve
 replace issue_comment = "B11=4 (No VI learners) but reported VI learners in B7"
 egen total_vi = rowtotal(B7_PP1_1 B7_PP1_2 B7_PP2_1 B7_PP2_2 B7_Grade1_1 B7_Grade1_2 B7_Grade2_1 B7_Grade2_2)
 keep if B11 == 4 & total_vi > 0 & !missing(B11)
-export excel $var_kept B11 total_vi issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("B11 vs B7_Consistency", replace) firstrow(variables)
+cap export excel $var_kept B11 total_vi issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("B11 vs B7_Consistency", replace) firstrow(variables)
 restore
 
 
@@ -333,12 +356,12 @@ restore
 preserve
 replace issue_comment = "Training duration >104 weeks (2+ years) - please verify"
 gen flag_high_weeks = 0
-foreach var in C4_1 C4_2 C4_3 C4_4 C4_96 {
+foreach var in C4_1{
     replace flag_high_weeks = 1 if `var' > 104 & !missing(`var')
 }
 keep if flag_high_weeks == 1
 if _N > 0 {
-    export excel $var_kept C4_1 C4_2 C4_3 C4_4 C4_96 issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("C4_Over_104_Weeks", replace) firstrow(variables)
+    export excel $var_kept C4_1 issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("C4_Over_104_Weeks", replace) firstrow(variables)
 }
 restore
 
@@ -425,22 +448,22 @@ if _N > 0 {
 }
 restore
 
-// Treatment/Control Logic (Section G)
-preserve
-replace issue_comment = "Control school (Sch_Type=2) but answered LBB section G"
-// Check if any G-section variable has data
-gen g_section_answered = 0
-forvalues i = 1/12 {
-    capture confirm variable G`i'
-    if !_rc {
-        replace g_section_answered = 1 if !missing(G`i')
-    }
-}
-
-keep if Sch_Type == 2 & g_section_answered == 1
-
-cap export excel $var_kept Sch_Type G1 G2 G3 G4 G5 G6 G7 G8 G9 G10 G11 G12 issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("Treatment_Control_Mix", replace) firstrow(variables)
-restore
+// // Treatment/Control Logic (Section G)
+// preserve
+// replace issue_comment = "Control school (Sch_Type=2) but answered LBB section G"
+// // Check if any G-section variable has data
+// gen g_section_answered = 0
+// forvalues i = 1/12 {
+//     capture confirm variable G`i'
+//     if !_rc {
+//         replace g_section_answered = 1 if !missing(G`i')
+//     }
+// }
+//
+// keep if Sch_Type == 2 & g_section_answered == 1
+//
+// cap export excel $var_kept Sch_Type G1 G2 G3 G4 G5 G6 G7 G8 G9 G10 G11 G12 issue_comment using "LBB DQA Teachers ${dates}.xlsx", sheet("Treatment_Control_Mix", replace) firstrow(variables)
+// restore
 
 
 // STRAIGHT-LINING CHECK FOR SECTION E ATTITUDINAL QUESTIONS

@@ -15,6 +15,10 @@ drop SubmissionDate	starttime endtime deviceid devicephonenum	username device_in
 
 order KEY
 
+*sort sup
+replace SUP_NAME = 2 if ENUM_NAME == 9
+replace SUP_NAME = 2 if ENUM_NAME == 5
+
 *Formating date
 gen INT_DATE1 = dofc(INT_DATE)
 format INT_DATE1 %td
@@ -353,13 +357,13 @@ drop B2_tots
 
 replace RES_POSITION = 1 if inlist(PARENT_KEY,"uuid:191166f6-2de1-4cd8-91bb-95d108812ea4","uuid:5e5d6d62-8b45-4ed5-a0ec-ed8a77aa1acb","uuid:0c104b28-e03b-4eff-9d12-ca7be4d89cad","uuid:95656b48-9c35-468e-adef-49848860e1ee")
 
-replace RES_PHONE = 726210678 if inlist(PARENT_KEY,"uuid:191166f6-2de1-4cd8-91bb-95d108812ea4")
+replace RES_PHONE = "726210678" if inlist(PARENT_KEY,"uuid:191166f6-2de1-4cd8-91bb-95d108812ea4")
 
-replace RES_PHONE = 719652374 if inlist(PARENT_KEY,"uuid:5e5d6d62-8b45-4ed5-a0ec-ed8a77aa1acb")
+replace RES_PHONE = "719652374" if inlist(PARENT_KEY,"uuid:5e5d6d62-8b45-4ed5-a0ec-ed8a77aa1acb")
 
-replace RES_PHONE = 720321590 if inlist(PARENT_KEY,"uuid:0c104b28-e03b-4eff-9d12-ca7be4d89cad")
+replace RES_PHONE = "720321590" if inlist(PARENT_KEY,"uuid:0c104b28-e03b-4eff-9d12-ca7be4d89cad")
 
-replace RES_PHONE = 728491300 if inlist(PARENT_KEY,"uuid:95656b48-9c35-468e-adef-49848860e1ee")
+replace RES_PHONE = "728491300" if inlist(PARENT_KEY,"uuid:95656b48-9c35-468e-adef-49848860e1ee")
 
 replace RES_NAME = "Boniface Lonyait" if PARENT_KEY == "uuid:95656b48-9c35-468e-adef-49848860e1ee"
 
@@ -374,6 +378,8 @@ drop if PARENT_KEY == "uuid:84ecfe9f-9654-4a0e-a4d9-293cabc054d5"
 
 *On hold Sahajanad Special School //awaiting the data from other platform
 drop if PARENT_KEY == "uuid:9bc21eb3-8dc7-4814-8a17-713bf13656ef"
+
+drop total_vi_boys	total_vi_girls	total_boys	total_girls E2_1_1	E2_1_2	E2_1_1_new	E2_1_2_new	E3_1_1	E3_1_2	E3_1_3	E3_1_4	E3_1_5	E3_1_1_new	E3_1_2_new	E3_1_3_new	E3_1_4_new	E3_1_5_new
 
 save "Long format\LBB Screener Headteacher dataset.dta",replace
 
