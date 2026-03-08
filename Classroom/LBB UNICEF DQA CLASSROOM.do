@@ -47,6 +47,7 @@ label define school_lbl 1 "Iftin Integrated Primary" 2 "Jaribu Primary" 3 "Chief
 lab values  School_name school_lbl
 
 save "Classroom LBB Baseline Processed data.dta",replace
+export excel using "Classroom LBB Baseline Processed data.xlsx", sheetreplace firstrow(variables)
 
 //checks-Flaggings
 ***************************************************************************************

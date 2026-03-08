@@ -382,8 +382,37 @@ drop if PARENT_KEY == "uuid:9bc21eb3-8dc7-4814-8a17-713bf13656ef"
 drop total_vi_boys	total_vi_girls	total_boys	total_girls E2_1_1	E2_1_2	E2_1_1_new	E2_1_2_new	E3_1_1	E3_1_2	E3_1_3	E3_1_4	E3_1_5	E3_1_1_new	E3_1_2_new	E3_1_3_new	E3_1_4_new	E3_1_5_new
 
 save "Long format\LBB Screener Headteacher dataset.dta",replace
-
 export excel using "Long format\LBB Screener Headteacher dataset.xlsx", sheetreplace firstrow(variables)
+
+*Add VIs
+***Pull VIs/ NoN VIs and Teachers data.
+cls
+clear all
+use "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\VI\LBB Baseline Survey Processed data VIs.dta" 
+
+ren School School_name
+keep interview_ID ENUM_NAME School_name RES_NAME_F RES_NAME_L RES_AGE RES_SEX CONSENT
+
+drop if CONSENT == 0
+
+merge m:m School_name using "Long format\LBB Screener Headteacher dataset.dta" 
+
+order interview_ID ENUM_NAME RES_NAME_F RES_NAME_L RES_AGE RES_SEX CONSENT,after(E2_1_3_new)
+
+order School_name,after(Village)
+
+destring B3_total
+
+save "Long format\LBB Screener Headteacher-Merged VI dataset.dta",replace
+
+// *Add Teachers
+// ***Teachers data.
+// cls
+// clear all
+// use "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Teachers\Teacher LBB Baseline Processed data.dta"
+//
+//
+// export excel using "Long format\LBB Screener Headteacher-Merged VI dataset.xlsx", sheetreplace firstrow(variables)
 
 *Flag
 // uuid:9bc21eb3-8dc7-4814-8a17-713bf13656ef

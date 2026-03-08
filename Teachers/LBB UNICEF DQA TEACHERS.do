@@ -56,6 +56,7 @@ label define school_lbl 1 "Iftin Integrated Primary" 2 "Jaribu Primary" 3 "Chief
 lab values  School_name school_lbl
 
 save "Teacher LBB Baseline Processed data.dta",replace
+export excel using "Teacher LBB Baseline Processed data.xlsx", sheetreplace firstrow(variables)
 
 *checks-Flaggings
 ***************************************************************************************
@@ -509,14 +510,18 @@ keep if flag_short == 1
 replace issue_comment = issue_comment + " -" + short_vars
 
 if _N > 0 {
-    export excel caseid ENUM_NAME School RES_NAME ///
+    export excel ENUM_NAME School_name RES_NAME ///
         B4_S B5_S B9_S issue_comment short_vars ///
         using "LBB DQA Teachers ${dates}.xlsx", ///
         sheet("Short_Responses", replace) firstrow(variables)
 }
 restore
 
+*XXXXXXXXXXXXXXXXXXXXX
+keep KEY School_name Consent
+drop if Consent == 0
 
+export excel using "Teacher LBB Baseline Screener data.xlsx", sheetreplace firstrow(variables)
 
 
 
