@@ -981,14 +981,14 @@ restore
 preserve
 replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
 keep if letter_sound_knowledgenum_att < 100 & letter_sound_knowledgegridAutoSt == 0 & letter_sound_knowledgetime_remai != 0
-cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(Letter_knowledge_time_3,replace)firstrow(variables)
+cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(Letter_knowledge_time_4,replace)firstrow(variables)
 restore
 
 *Attempted items were less than expected yet the time ellapsed
 preserve
 replace issue_comment ="Attempted items were less than expected yet the time elapsed, kindly clarify"
 keep if letter_sound_knowledgenum_att < 10
-cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(Letter_knowledge_time_4,replace)firstrow(variables)
+cap export excel $var_kept letter_sound_knowledge_1 -  letter_sound_knowledgenum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(Letter_knowledge_time_5,replace)firstrow(variables)
 restore
 
 * reading familiar 
@@ -1017,14 +1017,14 @@ restore
 preserve
 replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
 keep if read_familiar_wordsnum_att < 50 & read_familiar_wordsgridAutoStopp == 0 & read_familiar_wordstime_remainin != 0
-cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(read_familiar_time_3,replace)firstrow(variables)
+cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(read_familiar_time_4,replace)firstrow(variables)
 restore
 
 *Attempted items were less than expected yet time elapsed
 preserve
 replace issue_comment ="Attempted items were less than expected yet time elapsed, kindly clarify"
 keep if read_familiar_wordsnum_att < 5
-cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(read_familiar_time_4,replace)firstrow(variables)
+cap export excel $var_kept read_familiar_words_1 -  read_familiar_wordsnum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(read_familiar_time_5,replace)firstrow(variables)
 restore
 
 * Oral fluency 
@@ -1052,15 +1052,15 @@ restore
 *Attempted items were less than expected yet there was no trigger
 preserve
 replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
-keep if read_familiar_wordsnum_att < 50 & oral_reading_fluencygridAutoStop == 0 & oral_reading_fluencytime_remaini != 0
-cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(oral_reading_time_3,replace)firstrow(variables)
+keep if oral_reading_fluencynum_att < 44 & oral_reading_fluencygridAutoStop == 0 & oral_reading_fluencytime_remaini != 0
+cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(oral_reading_time_4,replace)firstrow(variables)
 restore
 
 *Attempted items were less than expected yet time elapsed
 preserve
 replace issue_comment ="Attempted items were less than expected yet time elapsed, kindly clarify"
-keep if read_familiar_wordsnum_att < 11
-cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(oral_reading_time_4,replace)firstrow(variables)
+keep if oral_reading_fluencynum_att < 11
+cap export excel $var_kept oral_reading_fluency_1 -  oral_reading_fluencynum_att issue_comment using "LBB UNICEF issues NON-VIs ${dates} v01.xlsx", sheet(oral_reading_time_5,replace)firstrow(variables)
 restore
 
 * Addition
