@@ -10,7 +10,9 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 ***import dataset
 
-import delimited "Non VI\UNICEF_LBB-Non-Visually_Impaired_Learners_Only_Field-1772990008174.csv", case(preserve)
+import delimited "Non VI\UNICEF_LBB-Non-Visually_Impaired_Learners_Only_Field-1773292085401.csv", case(preserve)
+
+//STREAM_NAME INTRO_Q1 ITNRO_Q2 COMMENT 
 
 *****************************************************************************************************************
 ****Formating date
@@ -140,9 +142,13 @@ drop School_informationGroup School_informationGroup_level
 
 *Grade
 lab var GRADE "GRADE"
-lab define grd 1 "Grade 1" 2 "Grade 2"
-destring GRADE,replace
-lab values GRADE grd
+
+label define grade_id 1 "PP1" 2 "PP2" 3 "Grade 1" 4 "Grade 2" 5 "Grade 3" 6 "Grade 4" 7 "Grade 5" 8 "Grade 6" 9 "Grade 7" 10 "Grade 8" 11 "Grade 9"
+
+replace GRADE = 3 if GRADE == 1
+replace GRADE = 4 if GRADE == 2
+
+lab values GRADE grade_id
 
 *Age
 destring RES_AGE,replace
@@ -397,7 +403,7 @@ lab values County cnty_lbl
 drop School_informationCounty_level	School_informationSub_county School_informationCounty
 
 *School
-label define school_lbl 1 "Iftin Integrated Primary" 2 "Jaribu Primary" 3 "Chief Muturi Integrated Primary" 4 "Enchurrai" 5 "Kikelelwa Integrated Primary" 6 "Lokitang Primary" 7 "Kakuma Placeholder School" 8 "Kibarani Integrated" 9 "Mtsara wa Tsatsu Pri School" 10 "Sahajanad Special School" 11 "Timboni Special School" 12 "Vilakwe Pri School" 13 "Daua Integrated Primary" 14 "Kamor Integrated Primary" 15 "Mandera DEB Primary" 16 "Mandera Special School for the Blind" 17 "Shashafey Integrated Primary" 18 "Al-Hidaya Muslim Primary" 19 "Kiwanja Ndege Primary School" 20 "Logologo Integrated Primary School" 21 "St. Johns Primary" 22 "St. Theresa Girls Primary" 23 "Lkurroto Primary School" 24 "Maralal DEB Primary" 25 "Ntepes Primary School" 26 "Seneya Special Primary School" 27 "St. Pauls Integrated Primary School" 28 "Kakuma Arid Zone" 29 "Kakuma Mixed Primary" 30 "Nationokar Primary" 31 "Barwaqo Girls Integrated Primary" 32 "Catholic Integrated Primary and Junior School" 33 "Got-Ade Primary School" 34 "ICF Integrated Primary School" 35 "Kalkacha Primary School" 36 "Volunteer Primary and Junior School" 37 "Wajir Township Primary" 38 "Misanga FYM Primary" 39 "Mukhuyu FYM Primary" 40 "Mupeli DEB Primary" 41 "Musikoma RC Primary" 42 "Sacred Heart Misikhu RC Boys Primary"
+label define school_lbl 1 "Iftin Integrated Primary" 2 "Jaribu Primary" 3 "Chief Muturi Integrated Primary" 4 "Enchurrai" 5 "Kikelelwa Integrated Primary" 6 "Lokitang Primary" 7 "Eliyes" 8 "Kibarani Integrated" 9 "Mtsara wa Tsatsu Pri School" 10 "Sahajanad Special School" 11 "Timboni Special School" 12 "Vilakwe Pri School" 13 "Daua Integrated Primary" 14 "Kamor Integrated Primary" 15 "Mandera DEB Primary" 16 "Mandera Special School for the Blind" 17 "Shashafey Integrated Primary" 18 "Al-Hidaya Muslim Primary" 19 "Kiwanja Ndege Primary School" 20 "Logologo Integrated Primary School" 21 "St. Johns Primary" 22 "St. Theresa Girls Primary" 23 "Lkurroto Primary School" 24 "Maralal DEB Primary" 25 "Ntepes Primary School" 26 "Seneya Special Primary School" 27 "St. Pauls Integrated Primary School" 28 "Kakuma Arid Zone" 29 "Kakuma Mixed Primary" 30 "Nationokar Primary" 31 "Barwaqo Girls Integrated Primary" 32 "Catholic Integrated Primary and Junior School" 33 "Got-Ade Primary School" 34 "ICF Integrated Primary School" 35 "Kalkacha Primary School" 36 "Volunteer Primary and Junior School" 37 "Wajir Township Primary" 38 "Misanga FYM Primary" 39 "Mukhuyu FYM Primary" 40 "Mupeli DEB Primary" 41 "Musikoma RC Primary" 42 "Sacred Heart Misikhu RC Boys Primary"
 
 ren School_informationSchool_label School
 replace School = "1" if School_informationSchool == "07Qbvxdq"
@@ -851,6 +857,9 @@ lab var  S28c"Do the difficulties interfere with your everyday life in the follo
 lab var  S28d"Do the difficulties interfere with your everyday life in the following areas? [Leisure Activities]"
 lab var  S29"Do the difficulties make it harder for those around you (family, friends, teachers, etc.)?"
 
+*drop Jaribu school
+drop if School == 2
+
 *save dataset
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\Non VI"
 
@@ -1096,7 +1105,12 @@ summ oral_reading_fluencynum_corr oral_reading_fluencynum_att
 summ identifying_numbers_gridnum_corr number_discrimine_gridnum_corr number_sequence_gridnum_corr addition_gridnum_corr
 
 *Save for dashboard updating
-keep interview_ID School CONSENT
-drop if CONSENT == 0
+cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\Non VI"
 
-export excel using "LBB Baseline for screener data NON-VIs.xlsx", sheetreplace firstrow(variables)
+ren School School_name
+ren GRADE C2_Grade_level
+
+keep interview_ID School_name CONSENT C2_Grade_level 
+drop if CONSENT != 1
+
+save "LBB Baseline for screener data NON-VIs.dta",replace

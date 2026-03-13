@@ -7,7 +7,7 @@
 get stata file = "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Screener\Long format\LBB Screener Headteacher dataset.dta".
 
 ************************************************************************************************************************************************************************************.
-VARIABLE LEVEL INT_DATE(NOMINAL).
+VARIABLE LEVEL INT_DATE School_name (NOMINAL).
 
 *Output Tally.
 OUTPUT NEW.
@@ -40,7 +40,7 @@ CTABLES
 * Export Output.
 OUTPUT EXPORT
   /CONTENTS  EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING
-  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v01.xlsx'
+  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v02.xlsx'
      OPERATION=CREATEFILE sheet="Screener Achievements"
      LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.
 OUTPUT CLOSE *.
@@ -78,7 +78,7 @@ CTABLES
 * Export Output.
 OUTPUT EXPORT
   /CONTENTS  EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING
-  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v01.xlsx'
+  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v02.xlsx'
      OPERATION=CREATESHEET sheet="VI Learners Achievements"
      LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.
 OUTPUT CLOSE *.
@@ -116,7 +116,7 @@ CTABLES
 * Export Output.
 OUTPUT EXPORT
   /CONTENTS  EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING
-  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v01.xlsx'
+  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v02.xlsx'
      OPERATION=CREATESHEET sheet="NON-VI Learners Achievements"
      LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.
 OUTPUT CLOSE *.
@@ -154,7 +154,7 @@ CTABLES
 * Export Output.
 OUTPUT EXPORT
   /CONTENTS  EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING
-  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v01.xlsx'
+  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v02.xlsx'
      OPERATION=CREATESHEET sheet="Teachers Achievements"
      LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.
 OUTPUT CLOSE *.
@@ -192,7 +192,7 @@ CTABLES
 * Export Output.
 OUTPUT EXPORT
   /CONTENTS  EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING
-  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v01.xlsx'
+  /XLSX  DOCUMENTFILE='C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Progress\LBB Daily Updates v02.xlsx'
      OPERATION=CREATESHEET sheet="Classroom Achievements"
      LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.
 OUTPUT CLOSE *.
