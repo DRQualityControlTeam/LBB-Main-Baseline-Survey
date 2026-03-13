@@ -11,7 +11,7 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 ***import dataset
 
-import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1773292089430.csv", case(preserve)
+import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1773381450452.csv", case(preserve)
 
 //PB15_Notes RES NAME PB7_Notes INTRO_Q1 ITNRO_Q2 COMMENT PB_COMMENT
 
@@ -1131,6 +1131,59 @@ preserve
 replace issue_comment ="Attempted items were less than expected yet there was no trigger and the time was not over, kindly clarify"
 keep if subtraction_gridnum_att < 5 & subtraction_gridgridAutoStopped == 0
 cap export excel $var_kept subtraction_grid_1 -  subtraction_gridgridAutoStopped issue_comment using "LBB UNICEF issues VIs ${dates} v01.xlsx", sheet(subtraction_issue,replace)firstrow(variables)
+restore
+
+* 1. Letter Knowledge (Auto-Stop rule: First 10 letters incorrect)
+preserve
+replace issue_comment ="Auto-stop failure or Glitch: Learner failed the first 10 letters, but attempts > 10."
+* Logic: First 10 = 0, Attempts > 10
+keep if letter_sound_knowledge_1 == 0 & letter_sound_knowledge_2 == 0 & letter_sound_knowledge_3 == 0 & letter_sound_knowledge_4 == 0 & letter_sound_knowledge_5 == 0 & letter_sound_knowledge_6 == 0 & letter_sound_knowledge_7 == 0 & letter_sound_knowledge_8 == 0 & letter_sound_knowledge_9 == 0 & letter_sound_knowledge_10 == 0 & letter_sound_knowledgenum_att > 10
+
+cap export excel $var_kept letter_sound_knowledge_1 - letter_sound_knowledge_100 letter_sound_knowledgenum_att letter_sound_knowledgenum_corr letter_sound_knowledgegridAutoSt issue_comment using "LBB UNICEF issues VIs ${dates} v01.xlsx", sheet(Letter_autostop_fail, replace) firstrow(variables)
+restore
+
+
+
+* 2. Familiar Words (Auto-Stop rule: First 5 words incorrect)
+preserve
+replace issue_comment ="Auto-stop failure or Glitch: Learner failed the first 5 words, but attempts > 5. "
+* Logic: First 5 = 0, Attempts > 5
+keep if read_familiar_words_1 == 0 & read_familiar_words_2 == 0 & read_familiar_words_3 == 0 & read_familiar_words_4 == 0 & read_familiar_words_5 == 0 & read_familiar_wordsnum_att > 5
+
+cap export excel $var_kept read_familiar_words_1 - read_familiar_words_50 read_familiar_wordsnum_att read_familiar_wordsnum_corr read_familiar_wordsgridAutoStopp issue_comment using "LBB UNICEF issues VIs ${dates} v01.xlsx", sheet(FamWord_autostop_fail, replace) firstrow(variables)
+restore
+
+
+
+* 3. Oral Reading Fluency (Auto-Stop rule: First 11 words incorrect)
+preserve
+replace issue_comment ="Auto-stop failure or Glitch: Learner failed the first sentence (11 words), but attempts > 11."
+* Logic: First 11 = 0, Attempts > 11
+keep if oral_reading_fluency_1 == 0 & oral_reading_fluency_2 == 0 & oral_reading_fluency_3 == 0 & oral_reading_fluency_4 == 0 & oral_reading_fluency_5 == 0 & oral_reading_fluency_6 == 0 & oral_reading_fluency_7 == 0 & oral_reading_fluency_8 == 0 & oral_reading_fluency_9 == 0 & oral_reading_fluency_10 == 0 & oral_reading_fluency_11 == 0 & oral_reading_fluencynum_att > 11
+
+cap export excel $var_kept oral_reading_fluency_1 - oral_reading_fluency_44 oral_reading_fluencynum_att oral_reading_fluencynum_corr oral_reading_fluencygridAutoStop issue_comment using "LBB UNICEF issues VIs ${dates} v01.xlsx", sheet(Oral_autostop_fail, replace) firstrow(variables)
+restore
+
+
+
+* 4. Addition Grid (Auto-Stop rule: First 5 math problems incorrect)
+preserve
+replace issue_comment ="Auto-stop failure or Glitch: Learner failed the first 5 addition problems, but attempts > 5."
+* Logic: First 5 = 0, Attempts > 5
+keep if addition_grid_1 == 0 & addition_grid_2 == 0 & addition_grid_3 == 0 & addition_grid_4 == 0 & addition_grid_5 == 0 & addition_gridnumber_of_items_att > 5
+
+cap export excel $var_kept addition_grid_1 - addition_grid_10 addition_gridnumber_of_items_att addition_gridnum_corr addition_gridgridAutoStopped issue_comment using "LBB UNICEF issues VIs ${dates} v01.xlsx", sheet(addition_autostop_fail, replace) firstrow(variables)
+restore
+
+
+
+* 5. Subtraction Grid (Auto-Stop rule: First 5 math problems incorrect)
+preserve
+replace issue_comment ="Auto-stop failure or Glitch: Learner failed the first 5 subtraction problems, but attempts > 5."
+* Logic: First 5 = 0, Attempts > 5
+keep if subtraction_grid_1 == 0 & subtraction_grid_2 == 0 & subtraction_grid_3 == 0 & subtraction_grid_4 == 0 & subtraction_grid_5 == 0 & subtraction_gridnum_att > 5
+
+cap export excel $var_kept subtraction_grid_1 - subtraction_grid_10 subtraction_gridnum_att subtraction_gridnum_corr subtraction_gridgridAutoStopped issue_comment using "LBB UNICEF issues VIs ${dates} v01.xlsx", sheet(subtract_autostop_fail, replace) firstrow(variables)
 restore
 
 ****Baseline data Quick descriptive analysis of the scores fareness.

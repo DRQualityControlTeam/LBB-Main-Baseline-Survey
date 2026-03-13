@@ -499,7 +499,6 @@ lab define cts_vis 1"Only Blind" 2"Blind and Low vision" 3"Only Low vision" 4"No
 
 lab values cat_vision cts_vis
 
-
 save "Long format\LBB Screener Headteacher-VIs-NON-VIs-Teachers-Class dataset.dta",replace
 export excel using "Long format\LBB Screener Headteacher-VIs-NON-VIs-Teachers-Class dataset.xlsx", sheetreplace firstrow(variables)
 
