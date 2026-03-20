@@ -10,7 +10,7 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 ***import dataset
 
-import delimited "Non VI\UNICEF_LBB-Non-Visually_Impaired_Learners_Only_Field-1773381446412.csv", case(preserve)
+import delimited "Non VI\UNICEF_LBB-Non-Visually_Impaired_Learners_Only_Field-1773819826513.csv", case(preserve)
 
 //STREAM_NAME INTRO_Q1 ITNRO_Q2 COMMENT 
 
@@ -157,7 +157,7 @@ lab var RES_AGE "Respondent age"
 *Sex
 destring RES_SEX,replace
 lab var RES_SEX "Respondent sex"
-lab define sx 1"Male" 2"Male" 3"Other"
+lab define sx 1"Male" 2"Female" 3"Other"
 lab values RES_SEX sx
 
 *universal lab define
@@ -860,6 +860,8 @@ lab var  S29"Do the difficulties make it harder for those around you (family, fr
 *drop Jaribu school
 drop if School == 2
 
+drop if CONSENT != 1
+
 *save dataset
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\Non VI"
 
@@ -1164,6 +1166,5 @@ ren School School_name
 ren GRADE C2_Grade_level
 
 keep interview_ID School_name CONSENT C2_Grade_level 
-drop if CONSENT != 1
 
 save "LBB Baseline for screener data NON-VIs.dta",replace

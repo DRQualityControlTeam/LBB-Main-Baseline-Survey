@@ -11,9 +11,9 @@ cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL
 
 ***import dataset
 
-import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1773381450452.csv", case(preserve)
+import delimited "VI\UNICEF_LBB-Visually_Impaired_Learners_Only_Field-1773819830548.csv", case(preserve)
 
-//PB15_Notes RES NAME PB7_Notes INTRO_Q1 ITNRO_Q2 COMMENT PB_COMMENT
+//PB15_Notes RES NAME PB7_Notes PB6_Notes INTRO_Q1 ITNRO_Q2 COMMENT PB_COMMENT
 
 
 
@@ -31,6 +31,8 @@ ren INT_DATE1 INT_DATE
 
 order INT_DATE, after(_id)
 lab var INT_DATE"Interview date"
+
+replace INT_DATE = td(04Mar2026) if _id == "53f563c5-034c-493a-bfc5-8be6dc5f7aec"
 
 *filter out older dates
 drop if INT_DATE < td(02Mar2026)
@@ -164,7 +166,7 @@ lab var RES_AGE "Respondent age"
 *Sex
 destring RES_SEX,replace
 lab var RES_SEX "Respondent sex"
-lab define sx 1"Male" 2"Male" 3"Other"
+lab define sx 1"Male" 2"Female" 3"Other"
 lab values RES_SEX sx
 
 *universal lab define
@@ -908,6 +910,8 @@ lab var  S28c"Do the difficulties interfere with your everyday life in the follo
 lab var  S28d"Do the difficulties interfere with your everyday life in the following areas? [Leisure Activities]"
 lab var  S29"Do the difficulties make it harder for those around you (family, friends, teachers, etc.)?"
 
+drop if CONSENT != 1
+
 *save dataset
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\VI"
 
@@ -1209,7 +1213,6 @@ ren School School_name
 ren GRADE C2_Grade_level
 
 keep interview_ID School_name CONSENT C2_Grade_level
-drop if CONSENT != 1
 
 
 save "LBB Baseline for screener data VIs.dta",replace

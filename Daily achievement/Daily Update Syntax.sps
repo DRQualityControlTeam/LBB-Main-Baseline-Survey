@@ -4,7 +4,7 @@
 *********************************************************************************************************************************************
 ***SCREENER SURVEY
 
-get stata file = "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Screener\Long format\LBB Screener Headteacher dataset.dta".
+get stata file = "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Screener\Long format\Merged data with C2 sorted.dta".
 
 ************************************************************************************************************************************************************************************.
 VARIABLE LEVEL INT_DATE School_name (NOMINAL).
@@ -88,7 +88,7 @@ OUTPUT CLOSE *.
 get stata file = "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\Non VI\LBB Baseline Survey Processed data NON-VIs.dta".
 
 ************************************************************************************************************************************************************************************.
-VARIABLE LEVEL INT_DATE(NOMINAL).
+VARIABLE LEVEL INT_DATE School (NOMINAL).
 
 *Output Tally.
 OUTPUT NEW.
@@ -126,7 +126,7 @@ OUTPUT CLOSE *.
 get stata file = "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Teachers\Teacher LBB Baseline Processed data.dta".
 
 ************************************************************************************************************************************************************************************.
-VARIABLE LEVEL INT_DATE(NOMINAL).
+VARIABLE LEVEL INT_DATE School_name (NOMINAL).
 
 *Output Tally.
 OUTPUT NEW.
