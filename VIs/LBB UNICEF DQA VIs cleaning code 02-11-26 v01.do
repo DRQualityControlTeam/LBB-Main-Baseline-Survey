@@ -315,7 +315,7 @@ lab values PCI_Q4 ys_rs
 lab define pc5 1"PP2" 2"PP2" 3"Grade 1" 4"Grade 2" 96"Other (Specify others)" 98 "Do not know/No response"
 
 lab values PCI_Q5 pc5
-lab values PCI_Q6 PCI_Q7 PCI_Q8 PCI_Q9 PCI_Q11 PCI_Q12 ys_rs
+lab values PCI_Q6 PCI_Q7 PCI_Q8 PCI_Q9 PCI_Q11 PCI_Q12 PCI_Q7a PCI_Q8a PCI_Q9a PCI_Q11a ys_rs
 lab values PCI_Q10_1 - PCI_Q10_98 yes_no
 
 *PC_Q13
@@ -912,11 +912,31 @@ lab var  S29"Do the difficulties make it harder for those around you (family, fr
 
 drop if CONSENT != 1
 
+destring GPSlatitude GPSlongitude GPSaccuracy,replace
+
+*PB Section
+lab define pb_sec 1"Not demonstrated" 2"Demonstrated with difficulty" 3"Demonstrated easily"
+
+destring PB1 PB2 PB3 PB4 PB5 PB6 PB7 PB8 PB9 PB10 PB11 PB12 PB13 PB14 PB15 PB16 PB17 PB18 PB19 PB20 PB21 PB22,replace
+
+lab values PB1 PB2 PB3 PB4 PB5 PB6 PB7 PB8 PB9 PB10 PB11 PB12 PB13 PB14 PB15 PB16 PB17 pb_sec
+
+lab define pb_sec2 0"No" 1"Sometimes" 2"Yes"
+
+lab values PB18 PB19 PB21 PB22 pb_sec2
+
+lab values PB20 yes_no
+
+*PCIs.
+
+
 *save dataset
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\VI"
 
 save "LBB Baseline Survey Processed data VIs.dta",replace
 export excel using "LBB Baseline Survey Processed data VIs.xlsx", sheetreplace firstrow(variables)
+
+hjhh
 ***************************************************************************
 *QC checks
 ********************************QC checks-Flaggings
