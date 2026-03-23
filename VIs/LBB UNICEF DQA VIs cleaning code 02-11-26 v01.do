@@ -363,14 +363,55 @@ label define s27 ///
 lab values S27 S28a	- S28d S29 s27
 
 *D
-label define dsec ///
+label define dsec1 ///
+1  "No difficulty" ///
+2  "Some difficulty" ///
+3  "A lot of difficulty" ///
+4  "Cannot see at all" ///
+98 "Don't know/Refuse to answer"
+
+label define dsec2 ///
 1  "No difficulty" ///
 2  "Some difficulty" ///
 3  "A lot of difficulty" ///
 4  "Cannot hear at all" ///
 98 "Don't know/Refuse to answer"
+
+label define dsec3 ///
+1  "No difficulty" ///
+2  "Some difficulty" ///
+3  "A lot of difficulty" ///
+4  "Cannot walk or climb steps at all" ///
+98 "Don't know/Refuse to answer"
+
+label define dsec4 ///
+1  "No difficulty" ///
+2  "Some difficulty" ///
+3  "A lot of difficulty" ///
+4  "Cannot remember or concentrate at all" ///
+98 "Don't know/Refuse to answer"
+
+label define dsec5 ///
+1  "No difficulty" ///
+2  "Some difficulty" ///
+3  "A lot of difficulty" ///
+4  "Cannot communicate at all" ///
+98 "Don't know/Refuse to answer"
+
+label define dsec6 ///
+1  "No difficulty" ///
+2  "Some difficulty" ///
+3  "A lot of difficulty" ///
+4  "Cannot do self-care at all" ///
+98 "Don't know/Refuse to answer"
+
 destring D1 - D6,replace
-lab values D1 - D6 dsec
+lab values D1 dsec1
+lab values D2 dsec2
+lab values D3 dsec3
+lab values D4 dsec4
+lab values D5 dsec5
+lab values D6 dsec6
 
 *SCHOOL_DESCRIPTION
 label define school_type 1 "Special School" 2 "Inclusive/Integrated School" 3 "Regular School with special unit"
@@ -927,16 +968,101 @@ lab values PB18 PB19 PB21 PB22 pb_sec2
 
 lab values PB20 yes_no
 
-*PCIs.
+// *Correct and align D1 against Screener verification dataset
+// gen categ = .
+// replace categ = 1 if 
+
+// br interview_ID SUP_NAME ENUM_NAME County School GRADE D1
+
+*Letter_knowledge correction
+replace letter_sound_knowledge_11 = . if interview_ID == "92f89860-f7e7-4c40-a866-04576e55148a"
+replace letter_sound_knowledge_10 = 0 if interview_ID == "03dc014c-d2bb-4162-a034-6379f404553d"
+
+*should be runn at last
+*att
+egen letter_att = rownonmiss(letter_sound_knowledge_1 - letter_sound_knowledge_100)
+replace letter_sound_knowledgenum_att = letter_att
+
+*corr
+egen letter_cor = rowtotal(letter_sound_knowledge_1 - letter_sound_knowledge_100)
+replace letter_sound_knowledgenum_corr = letter_cor
+
+*per min
+gen letter_per = round((60*letter_sound_knowledgenum_corr)/(letter_sound_knowledgeduration-letter_sound_knowledgetime_remai))
+replace letter_sound_knowledgeitems_per_ = letter_per
+ren letter_sound_knowledgeitems_per_ letter_sound_knowledge_per_min
+
+drop letter_per letter_cor letter_att letter_sound_knowledgeitem_at_ti	letter_sound_knowledgetime_inter
+
+*Reading familiar
+foreach x of varlist read_familiar_words_6-read_familiar_words_50{
+	replace `x' = . if inlist(interview_ID,"4e713567-ceec-401c-b139-28859c20261c","2440e5a4-eee0-4c80-a2b6-293eef9f5f96","271411dc-ebf4-4fb4-bf27-a782e3a70f51","92f89860-f7e7-4c40-a866-04576e55148a","337f440e-6178-4446-8591-63a8e14c79aa","81decbb6-38be-462c-84be-6ae7b3922ebf")
+}
+
+replace read_familiar_words_2 = 0 if interview_ID == "b3fee61b-4d4c-41ce-8eac-80703bf89843"
+replace read_familiar_words_5 = 0 if interview_ID == "b3fee61b-4d4c-41ce-8eac-80703bf89843"
+replace read_familiar_wordsgridAutoStopp = 1 if interview_ID == "b3fee61b-4d4c-41ce-8eac-80703bf89843"
+	
+*should be runn at last
+*att
+egen rd_att = rownonmiss(read_familiar_words_1 - read_familiar_words_50)
+replace read_familiar_wordsnum_att = rd_att
+
+*corr
+egen rd_cor = rowtotal(read_familiar_words_1 - read_familiar_words_50)
+replace read_familiar_wordsnum_corr = rd_cor
+
+*per min
+gen rd_per = round((60*read_familiar_wordsnum_corr)/(read_familiar_wordsduration-read_familiar_wordstime_remainin))
+replace read_familiar_wordsitems_per_min = rd_per
+
+drop rd_att rd_cor rd_per read_familiar_wordsitem_at_time	read_familiar_wordstime_intermed
+
+*oral fluency
+replace oral_reading_fluency_11 = 0 if interview_ID == "c9180e54-a49e-47cf-b02c-ca321c88f957"
+replace oral_reading_fluency_12 = . if interview_ID == "4e713567-ceec-401c-b139-28859c20261c"
+foreach x in oral_reading_fluency_7	oral_reading_fluency_8	oral_reading_fluency_9	oral_reading_fluency_10	oral_reading_fluency_11{
+	replace `x' = 0 if interview_ID == "f062575d-ca2d-445f-a27f-e2ab380a7d4d"
+}
+
+replace oral_reading_fluency_12 = . if interview_ID == "92f89860-f7e7-4c40-a866-04576e55148a"
+
+foreach x in oral_reading_fluency_5	oral_reading_fluency_6	oral_reading_fluency_7	oral_reading_fluency_8	oral_reading_fluency_9	oral_reading_fluency_10	oral_reading_fluency_11	oral_reading_fluency_12	oral_reading_fluency_13{
+	replace `x' = 1 if interview_ID == "b3fee61b-4d4c-41ce-8eac-80703bf89843"
+}
+
+replace oral_reading_fluencytime_remaini = 0 if interview_ID == "ec2cb8d2-1522-4f8c-82eb-3fa75a6f5055"
+
+*should be runn at last
+*att
+egen or_att = rownonmiss(oral_reading_fluency_1 - oral_reading_fluency_44)
+replace oral_reading_fluencynum_att = or_att
+
+*corr
+egen or_cor = rowtotal(oral_reading_fluency_1 - oral_reading_fluency_44)
+replace oral_reading_fluencynum_corr = or_cor
+
+*per min
+gen or_per = round((60*oral_reading_fluencynum_corr)/(oral_reading_fluencyduration-oral_reading_fluencytime_remaini))
+replace oral_reading_fluencyitems_per_mi = or_per
+ren oral_reading_fluencyitems_per_mi oral_reading_fluency_per_min
+
+drop or_att or_cor or_per oral_reading_fluencyitem_at_time	oral_reading_fluencytime_interme			
+
+*comprehension
+replace reading_comprehension_q1 = 3 if inlist(interview_ID,"c9180e54-a49e-47cf-b02c-ca321c88f957","f062575d-ca2d-445f-a27f-e2ab380a7d4d","b3fee61b-4d4c-41ce-8eac-80703bf89843")
 
 
+
+br interview_ID oral_reading_fluencynum_att oral_reading_fluencynum_corr oral_reading_fluency_per_min reading_comprehension_q1 - reading_comprehension_score
+
+sfdgg
 *save dataset
 cd "C:\Users\oyoo\OneDrive - Dalberg Global Development Advisors\QUALITY CONTROL\Projects\2026\Projects\UNICEF LBB\Main\Data\Raw\Student\VI"
 
 save "LBB Baseline Survey Processed data VIs.dta",replace
 export excel using "LBB Baseline Survey Processed data VIs.xlsx", sheetreplace firstrow(variables)
 
-hjhh
 ***************************************************************************
 *QC checks
 ********************************QC checks-Flaggings
