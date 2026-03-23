@@ -385,6 +385,14 @@ drop total_vi_boys	total_vi_girls	total_boys	total_girls E2_1_1	E2_1_2	E2_1_1_ne
 
 drop g1_vi_total g2_vi_total 
 
+*Update Lokitang G1-G2 to zeros
+replace C2_total = 0  if (C2_Grade_level == 3 | C2_Grade_level == 4) & School_name == 6
+replace C2_tots = 0  if (C2_Grade_level == 3 | C2_Grade_level == 4) & School_name == 6
+
+*update C2b_1	C2b_2
+replace C2b_1 = 0 if (C2_Grade_level == 3 | C2_Grade_level == 4) & School_name == 6
+replace C2b_2 = 0 if (C2_Grade_level == 3 | C2_Grade_level == 4) & School_name == 6
+
 save "Long format\Merged data with C2 sorted.dta",replace
 
 // push to the last G1_VI_count SET_OF_G1_VI G2_VI_count SET_OF_G2_VI
